@@ -8,7 +8,7 @@ var spawn = child_process.spawn;
 var shellescape = require('shell-escape');
 
 router.get('/', function(req, res, next) {
-  res.render('Pippen v0.1.0');
+  res.send('Pippen v0.1.0');
 });
 
 router.post('/add_user', validate({body: userAddSchema}), (req, res, next) => {
