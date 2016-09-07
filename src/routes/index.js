@@ -11,7 +11,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/useradd', validate({body: userAddSchema}), (req, res, next) => {
-    var body = request.body;
+    var body = req.body;
     const useradd = execFile('useradd', [body.username], (err, stdout, stderr) => {
         if (err) {
             res.status(500);
