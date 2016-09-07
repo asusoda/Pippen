@@ -4,7 +4,6 @@ var validate = require('express-jsonschema').validate;
 var userAddSchema = require('../schema/useradd');
 var execFile = require('child_process').execFile;
 var shellescape = require('shell-escape');
-var passwd = require('passwd-linux');
 
 router.get('/', function(req, res, next) {
   res.render('Pippen v0.1.0');
@@ -12,28 +11,19 @@ router.get('/', function(req, res, next) {
 
 router.post('/useradd', validate({body: userAddSchema}), (req, res, next) => {
     var body = req.body;
-    const useradd = execFile('useradd', [body.username], (err, stdout, stderr) => {
+    const useradd = execFile('adduser', ['--disabled-password', '--gecos', '""', body.username], (err, stdout, stderr) => {
         if (err) {
-            res.status(500);
-            res.send('Could not create user');
+            next(err);
         }
         else {
-            const mkhomedir_helper = execFile('mkhomedir_helper' [body.username], (err, stdout, stderr) => {
+            const pass = execFile('echo' [`${body.username}:${body.password}`, '|', 'chpasswd'], (err, stdout, stderr) => {
                 if (err) {
                     res.status(500);
-                    res.send('Could not make home directory for user');
+                    next(err);
                 }
                 else {
-                    passwd.changePass(body.username, body.password, (err, response) => {
-                        if (err) {
-                            res.status(500);
-                            res.send('Could not set password for user');
-                        }
-                        else {
-                            res.status(201);
-                            res.send('User created');
-                        }
-                    });
+                    res.status(201);
+                    res.send('User created');
                 }
             });
         }
