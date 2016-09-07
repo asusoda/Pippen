@@ -2,7 +2,9 @@ var express = require('express');
 var router = express.Router();
 var validate = require('express-jsonschema').validate;
 var userAddSchema = require('../schema/useradd');
-var execFile = require('child_process').execFile;
+var child_process = require('child_process');
+var execFile = child_process.execFile;
+var spawn = child_process.spawn;
 var shellescape = require('shell-escape');
 
 router.get('/', function(req, res, next) {
@@ -16,16 +18,19 @@ router.post('/useradd', validate({body: userAddSchema}), (req, res, next) => {
             next(err);
         }
         else {
-            const pass = execFile('echo' [`${body.username}:${body.password}`, '|', 'chpasswd'], (err, stdout, stderr) => {
-                if (err) {
-                    res.status(500);
-                    next(err);
-                }
-                else {
+            const pass = spawn('chpasswd');
+            pass.on('close', (code) => {
+                if (code === 0) {
                     res.status(201);
                     res.send('User created');
                 }
-            });
+                else {
+                    res.status(500);
+                    res.send('Could not set password for user');
+                }
+            })
+            pass.stdin.write(`${body.username}:${body.password}`);
+            pass.stdin.end();
         }
     });
 });
