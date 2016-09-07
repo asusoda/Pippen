@@ -5,7 +5,6 @@ var userAddSchema = require('../schema/useradd');
 var child_process = require('child_process');
 var execFile = child_process.execFile;
 var spawn = child_process.spawn;
-var shellescape = require('shell-escape');
 
 router.get('/', function(req, res, next) {
   res.send('Pippen v0.1.0');
