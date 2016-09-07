@@ -11,7 +11,7 @@ router.get('/', function(req, res, next) {
   res.render('Pippen v0.1.0');
 });
 
-router.post('/useradd', validate({body: userAddSchema}), (req, res, next) => {
+router.post('/add_user', validate({body: userAddSchema}), (req, res, next) => {
     var body = req.body;
     const useradd = execFile('adduser', ['--disabled-password', '--gecos', '""', body.username], (err, stdout, stderr) => {
         if (err) {
