@@ -38,7 +38,7 @@ function verifyPassword(username, password, callback) {
                 }
             });
             if (userTokens) {
-                var passwordHash = tokens[1];
+                var passwordHash = userTokens[1];
                 crypt(password, passwordHash, (err, value) => {
                     if (err) {
                         callback(err);
