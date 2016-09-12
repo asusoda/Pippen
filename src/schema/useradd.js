@@ -1,3 +1,5 @@
+'use strict';
+
 var UserAddSchema = {
     type: 'object',
     properties: {

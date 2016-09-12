@@ -1,3 +1,5 @@
+'use strict';
+
 const child_process = require('child_process');
 const fs = require('fs');
 const crypt = require('crypt3/async');

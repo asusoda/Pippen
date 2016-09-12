@@ -1,3 +1,5 @@
+'use strict';
+
 var ChangePasswordSchema = {
     type: 'object',
     properties: {
