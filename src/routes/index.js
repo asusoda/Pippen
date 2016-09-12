@@ -4,7 +4,7 @@ var validate = require('express-jsonschema').validate;
 var userAddSchema = require('../schema/useradd');
 var changePasswordSchema = require('../schema/changePassword');
 var child_process = require('child_process');
-var accountUtil = require('accountUtil');
+var accountUtil = require('../accountUtil');
 var execFile = child_process.execFile;
 var spawn = child_process.spawn;
 
