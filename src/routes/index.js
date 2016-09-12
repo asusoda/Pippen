@@ -2,7 +2,9 @@ var express = require('express');
 var router = express.Router();
 var validate = require('express-jsonschema').validate;
 var userAddSchema = require('../schema/useradd');
+var changePasswordSchema = require('../schema/changePassword');
 var child_process = require('child_process');
+var accountUtil = require('accountUtil');
 var execFile = child_process.execFile;
 var spawn = child_process.spawn;
 
@@ -12,24 +14,33 @@ router.get('/', function(req, res, next) {
 
 router.post('/add_user', validate({body: userAddSchema}), (req, res, next) => {
     var body = req.body;
-    const useradd = execFile('adduser', ['--disabled-password', '--gecos', '""', body.username], (err, stdout, stderr) => {
+    const callback = (err, message) => {
         if (err) {
             next(err);
         }
         else {
-            const pass = spawn('chpasswd');
-            pass.on('close', (code) => {
-                if (code === 0) {
-                    res.status(201);
-                    res.send('User created');
-                }
-                else {
-                    res.status(500);
-                    res.send('Could not set password for user');
-                }
-            })
-            pass.stdin.write(`${body.username}:${body.password}`);
-            pass.stdin.end();
+            res.status(201).send(message);
+        }
+    }
+    accountUtil.createAccount(body.username, body.password, callback);
+});
+
+router.put('/change_password', validate({body: changePasswordSchema}), (req, res, next) => {
+    var body = req.body;
+    const callback = (err, message) => {
+        if (err) {
+            next(err);
+        }
+        else {
+            res.send(200).send(message);
+        }
+    };
+    accountUtil.verifyPassword(body.username, body.password, (err, message) => {
+        if (err) {
+            next(err);
+        }
+        else {
+            accountUtil.changePassword(body.username, body.password, callback);
         }
     });
 });
