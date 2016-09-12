@@ -32,7 +32,7 @@ router.put('/change_password', validate({body: changePasswordSchema}), (req, res
             next(err);
         }
         else {
-            res.send(200).send(message);
+            res.status(200).send(message);
         }
     };
     accountUtil.verifyPassword(body.username, body.current_password, (err, message) => {
